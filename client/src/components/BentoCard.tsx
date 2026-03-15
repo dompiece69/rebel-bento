@@ -1,8 +1,8 @@
 /*
- * DESIGN: Neon Vandal — Cyberpunk Graffiti Noir
+ * DESIGN: Banksy Street Art — Raw Stencil Rebellion
  * BentoCard: Flippable card — video front, animated link back.
- * Corner grab handles for resize. iFrame containment on back.
- * Neon glow borders, glitch hover, scan-line textures.
+ * Corner grab handles for resize within grid cell bounds.
+ * Rounded edges, deep shadows, concrete texture. No overlap.
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -15,7 +15,7 @@ export interface BentoCardData {
   videoUrl: string;
   linkUrl: string;
   linkLabel: string;
-  neonColor: 'pink' | 'green' | 'blue' | 'amber';
+  neonColor: 'red' | 'white' | 'grey' | 'dark';
   defaultWidth: number;
   defaultHeight: number;
   rotation?: number;
@@ -24,73 +24,75 @@ export interface BentoCardData {
 interface BentoCardProps {
   card: BentoCardData;
   style?: React.CSSProperties;
+  gridCellWidth?: number;
+  gridCellHeight?: number;
 }
 
-const neonColors = {
-  pink: {
-    border: 'rgba(255, 45, 123, 0.5)',
-    glow: 'rgba(255, 45, 123, 0.25)',
-    text: '#FF2D7B',
-    bg: 'rgba(255, 45, 123, 0.06)',
-    shadow: '0 0 12px rgba(255, 45, 123, 0.3), 0 0 30px rgba(255, 45, 123, 0.15)',
+const cardColors = {
+  red: {
+    accent: '#C83232',
+    accentGlow: 'rgba(200, 50, 50, 0.25)',
+    border: 'rgba(200, 50, 50, 0.35)',
+    bg: 'rgba(200, 50, 50, 0.04)',
   },
-  green: {
-    border: 'rgba(0, 255, 159, 0.5)',
-    glow: 'rgba(0, 255, 159, 0.25)',
-    text: '#00FF9F',
-    bg: 'rgba(0, 255, 159, 0.06)',
-    shadow: '0 0 12px rgba(0, 255, 159, 0.3), 0 0 30px rgba(0, 255, 159, 0.15)',
+  white: {
+    accent: '#e8e0d4',
+    accentGlow: 'rgba(232, 224, 212, 0.15)',
+    border: 'rgba(232, 224, 212, 0.2)',
+    bg: 'rgba(232, 224, 212, 0.03)',
   },
-  blue: {
-    border: 'rgba(0, 212, 255, 0.5)',
-    glow: 'rgba(0, 212, 255, 0.25)',
-    text: '#00D4FF',
-    bg: 'rgba(0, 212, 255, 0.06)',
-    shadow: '0 0 12px rgba(0, 212, 255, 0.3), 0 0 30px rgba(0, 212, 255, 0.15)',
+  grey: {
+    accent: '#8a8278',
+    accentGlow: 'rgba(138, 130, 120, 0.15)',
+    border: 'rgba(138, 130, 120, 0.25)',
+    bg: 'rgba(138, 130, 120, 0.04)',
   },
-  amber: {
-    border: 'rgba(255, 184, 0, 0.5)',
-    glow: 'rgba(255, 184, 0, 0.25)',
-    text: '#FFB800',
-    bg: 'rgba(255, 184, 0, 0.06)',
-    shadow: '0 0 12px rgba(255, 184, 0, 0.3), 0 0 30px rgba(255, 184, 0, 0.15)',
+  dark: {
+    accent: '#5a5550',
+    accentGlow: 'rgba(90, 85, 80, 0.15)',
+    border: 'rgba(90, 85, 80, 0.3)',
+    bg: 'rgba(90, 85, 80, 0.05)',
   },
 };
 
-export default function BentoCard({ card, style }: BentoCardProps) {
+export default function BentoCard({ card, gridCellWidth, gridCellHeight }: BentoCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [size, setSize] = useState({ w: 0, h: 0 });
+  const [spanW, setSpanW] = useState(card.defaultWidth);
+  const [spanH, setSpanH] = useState(card.defaultHeight);
   const [isResizing, setIsResizing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<{
     startX: number; startY: number;
-    startW: number; startH: number;
+    startSpanW: number; startSpanH: number;
     corner: string;
+    cellW: number; cellH: number;
   } | null>(null);
 
-  const colors = neonColors[card.neonColor];
+  const colors = cardColors[card.neonColor];
 
-  useEffect(() => {
-    if (cardRef.current && size.w === 0) {
-      const rect = cardRef.current.getBoundingClientRect();
-      setSize({ w: rect.width, h: rect.height });
-    }
-  }, [size.w]);
+  // Notify parent of span changes
+  const onSpanChange = useCallback((newW: number, newH: number) => {
+    setSpanW(Math.max(1, Math.min(4, newW)));
+    setSpanH(Math.max(1, Math.min(3, newH)));
+  }, []);
 
   const handleResizeStart = useCallback((e: React.MouseEvent | React.TouchEvent, corner: string) => {
     e.stopPropagation();
     e.preventDefault();
-    if (!cardRef.current) return;
+    if (!cardRef.current || !gridCellWidth || !gridCellHeight) return;
 
-    const rect = cardRef.current.getBoundingClientRect();
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
 
     resizeRef.current = {
-      startX: clientX, startY: clientY,
-      startW: rect.width, startH: rect.height,
+      startX: clientX,
+      startY: clientY,
+      startSpanW: spanW,
+      startSpanH: spanH,
       corner,
+      cellW: gridCellWidth,
+      cellH: gridCellHeight,
     };
     setIsResizing(true);
 
@@ -101,15 +103,19 @@ export default function BentoCard({ card, style }: BentoCardProps) {
       const dx = cx - resizeRef.current.startX;
       const dy = cy - resizeRef.current.startY;
 
-      let newW = resizeRef.current.startW;
-      let newH = resizeRef.current.startH;
+      // Snap to grid: calculate how many cells the drag covers
+      const cellDx = Math.round(dx / resizeRef.current.cellW);
+      const cellDy = Math.round(dy / resizeRef.current.cellH);
 
-      if (corner.includes('right')) newW += dx;
-      if (corner.includes('left')) newW -= dx;
-      if (corner.includes('bottom')) newH += dy;
-      if (corner.includes('top')) newH -= dy;
+      let newSpanW = resizeRef.current.startSpanW;
+      let newSpanH = resizeRef.current.startSpanH;
 
-      setSize({ w: Math.max(180, newW), h: Math.max(140, newH) });
+      if (corner.includes('right')) newSpanW += cellDx;
+      if (corner.includes('left')) newSpanW -= cellDx;
+      if (corner.includes('bottom')) newSpanH += cellDy;
+      if (corner.includes('top')) newSpanH -= cellDy;
+
+      onSpanChange(newSpanW, newSpanH);
     };
 
     const handleEnd = () => {
@@ -125,7 +131,7 @@ export default function BentoCard({ card, style }: BentoCardProps) {
     document.addEventListener('mouseup', handleEnd);
     document.addEventListener('touchmove', handleMove, { passive: false });
     document.addEventListener('touchend', handleEnd);
-  }, []);
+  }, [spanW, spanH, gridCellWidth, gridCellHeight, onSpanChange]);
 
   const handleFlip = useCallback(() => {
     if (!isResizing) setIsFlipped(prev => !prev);
@@ -133,54 +139,52 @@ export default function BentoCard({ card, style }: BentoCardProps) {
 
   const corners = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
   const cornerPos: Record<string, React.CSSProperties> = {
-    'top-left': { top: -3, left: -3, cursor: 'nw-resize' },
-    'top-right': { top: -3, right: -3, cursor: 'ne-resize' },
-    'bottom-left': { bottom: -3, left: -3, cursor: 'sw-resize' },
-    'bottom-right': { bottom: -3, right: -3, cursor: 'se-resize' },
+    'top-left': { top: 4, left: 4, cursor: 'nw-resize' },
+    'top-right': { top: 4, right: 4, cursor: 'ne-resize' },
+    'bottom-left': { bottom: 4, left: 4, cursor: 'sw-resize' },
+    'bottom-right': { bottom: 4, right: 4, cursor: 'se-resize' },
+  };
+
+  // Get grid span classes
+  const getSpanClasses = () => {
+    const colSpans: Record<number, string> = { 1: 'col-span-1', 2: 'sm:col-span-2', 3: 'sm:col-span-3', 4: 'sm:col-span-4' };
+    const rowSpans: Record<number, string> = { 1: 'row-span-1', 2: 'row-span-2', 3: 'row-span-3' };
+    return `${colSpans[spanW] || 'col-span-1'} ${rowSpans[spanH] || 'row-span-1'}`;
   };
 
   return (
     <motion.div
       ref={cardRef}
-      className="relative group"
-      style={{
-        ...style,
-        width: size.w > 0 ? size.w : '100%',
-        height: size.h > 0 ? size.h : '100%',
-        perspective: '1200px',
-        transform: `rotate(${card.rotation || 0}deg)`,
-      }}
+      className={`relative group ${getSpanClasses()}`}
+      style={{ perspective: '1200px', minHeight: 0 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, scale: 0.85, y: 30 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+      initial={{ opacity: 0, y: 25 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      layout
     >
       {/* Flip container */}
       <motion.div
         className="w-full h-full relative"
         style={{ transformStyle: 'preserve-3d' }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
         {/* ===== FRONT: Video ===== */}
         <div
-          className="absolute inset-0 overflow-hidden"
+          className="absolute inset-0 bento-card"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            borderRadius: '3px',
-            border: `1px solid ${isHovered ? colors.border : 'rgba(255,255,255,0.04)'}`,
-            boxShadow: isHovered ? colors.shadow : '0 2px 15px rgba(0,0,0,0.5)',
-            background: 'rgba(10, 10, 15, 0.95)',
-            transition: 'border-color 0.4s, box-shadow 0.4s',
+            borderColor: isHovered ? colors.border : undefined,
           }}
         >
           {/* Video iframe */}
           <iframe
             src={card.videoUrl}
             className="w-full h-full absolute inset-0"
-            style={{ border: 'none' }}
+            style={{ border: 'none', borderRadius: '10px' }}
             allow="autoplay; encrypted-media"
             allowFullScreen
             title={card.title}
@@ -191,76 +195,74 @@ export default function BentoCard({ card, style }: BentoCardProps) {
           <div
             className="absolute inset-x-0 bottom-0 z-10 flex items-end pointer-events-none"
             style={{
-              height: '45%',
-              background: 'linear-gradient(to top, rgba(8,8,12,0.92) 0%, rgba(8,8,12,0.5) 50%, transparent 100%)',
+              height: '50%',
+              background: 'linear-gradient(to top, rgba(20,18,15,0.95) 0%, rgba(20,18,15,0.6) 50%, transparent 100%)',
+              borderRadius: '0 0 10px 10px',
             }}
           >
             <div className="p-3 md:p-4 w-full pointer-events-auto">
               <h3
-                className="text-xs md:text-sm font-bold uppercase tracking-wider mb-1.5"
+                className="text-sm md:text-base uppercase tracking-wide mb-1"
                 style={{
-                  fontFamily: "'Russo One', sans-serif",
-                  color: colors.text,
-                  textShadow: `0 0 8px ${colors.glow}`,
+                  fontFamily: "'Permanent Marker', cursive",
+                  color: colors.accent,
+                  textShadow: `1px 1px 0 rgba(0,0,0,0.6)`,
                 }}
               >
                 {card.title}
               </h3>
               <button
                 onClick={(e) => { e.stopPropagation(); handleFlip(); }}
-                className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] opacity-50 hover:opacity-100 transition-all duration-300"
-                style={{
-                  fontFamily: "'Orbitron', sans-serif",
-                  color: '#e8e8e8',
-                }}
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider opacity-50 hover:opacity-100 transition-all duration-300"
+                style={{ fontFamily: "'Special Elite', cursive", color: '#a09888' }}
               >
-                <RotateCcw size={10} />
-                FLIP FOR LINK
+                <RotateCcw size={11} />
+                flip for link
               </button>
             </div>
           </div>
 
-          {/* Top-right neon color indicator */}
+          {/* Corner accent mark */}
           <div
-            className="absolute top-2 right-2 z-10 w-2 h-2 rounded-full"
+            className="absolute top-3 right-3 z-10 w-3 h-3"
             style={{
-              background: colors.text,
-              boxShadow: `0 0 6px ${colors.glow}, 0 0 12px ${colors.glow}`,
+              background: colors.accent,
+              borderRadius: '2px',
+              boxShadow: `0 0 8px ${colors.accentGlow}`,
+              transform: 'rotate(45deg)',
             }}
           />
         </div>
 
         {/* ===== BACK: Link + iFrame ===== */}
         <div
-          className="absolute inset-0 overflow-hidden"
+          className="absolute inset-0 bento-card overflow-hidden"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
-            borderRadius: '3px',
-            border: `1px solid ${colors.border}`,
-            boxShadow: colors.shadow,
-            background: `linear-gradient(145deg, rgba(8,8,12,0.97) 0%, ${colors.bg} 100%)`,
+            borderColor: colors.border,
           }}
         >
-          {/* Animated rain lines */}
-          <div className="absolute inset-0 overflow-hidden opacity-15 pointer-events-none">
-            {Array.from({ length: 6 }).map((_, i) => (
+          {/* Animated drip lines on back */}
+          <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
+            {Array.from({ length: 5 }).map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute"
                 style={{
-                  width: '1px',
+                  width: '2px',
                   height: '100%',
-                  background: `linear-gradient(to bottom, transparent, ${colors.text}, transparent)`,
-                  left: `${15 + i * 14}%`,
+                  background: `linear-gradient(to bottom, transparent, ${colors.accent}, transparent)`,
+                  left: `${12 + i * 20}%`,
+                  transformOrigin: 'top',
                 }}
-                animate={{ y: ['-100%', '100%'], opacity: [0, 0.8, 0] }}
+                animate={{ scaleY: [0, 1, 0], opacity: [0, 0.5, 0] }}
                 transition={{
-                  duration: 1.8 + Math.random() * 1.5,
+                  duration: 3 + Math.random() * 2,
                   repeat: Infinity,
-                  delay: Math.random() * 2,
-                  ease: 'linear',
+                  delay: Math.random() * 3,
+                  ease: 'easeInOut',
                 }}
               />
             ))}
@@ -269,46 +271,39 @@ export default function BentoCard({ card, style }: BentoCardProps) {
           {/* Back content */}
           <div className="relative z-10 w-full h-full flex flex-col p-4">
             {/* Title */}
-            <motion.h3
-              className="text-sm md:text-base font-bold uppercase tracking-wider mb-3 text-center"
+            <h3
+              className="text-sm md:text-base uppercase tracking-wide mb-3 text-center"
               style={{
-                fontFamily: "'Russo One', sans-serif",
-                color: colors.text,
-                textShadow: `0 0 8px ${colors.glow}`,
+                fontFamily: "'Permanent Marker', cursive",
+                color: colors.accent,
+                textShadow: `1px 1px 0 rgba(0,0,0,0.5)`,
               }}
-              animate={isHovered ? { x: [0, -1, 1, 0] } : {}}
-              transition={{ duration: 0.3, repeat: isHovered ? Infinity : 0 }}
             >
               {card.title}
-            </motion.h3>
+            </h3>
 
             {/* Link button */}
             <motion.a
               href={card.linkUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative flex items-center justify-center gap-2 px-4 py-2.5 text-[11px] uppercase tracking-[0.2em] font-bold overflow-hidden mb-3 shrink-0"
+              className="relative flex items-center justify-center gap-2 px-4 py-2.5 text-xs uppercase tracking-wider font-bold overflow-hidden mb-3 shrink-0"
               style={{
-                fontFamily: "'Orbitron', sans-serif",
-                color: colors.text,
-                border: `1px solid ${colors.border}`,
-                borderRadius: '2px',
-                background: 'rgba(8, 8, 12, 0.85)',
+                fontFamily: "'Bebas Neue', sans-serif",
+                letterSpacing: '0.15em',
+                color: card.neonColor === 'red' ? '#e8e0d4' : colors.accent,
+                border: `2px solid ${colors.border}`,
+                borderRadius: '8px',
+                background: card.neonColor === 'red' ? 'rgba(200, 50, 50, 0.15)' : 'rgba(25, 23, 20, 0.8)',
               }}
               whileHover={{
-                scale: 1.03,
-                boxShadow: `0 0 20px ${colors.glow}, 0 0 40px ${colors.glow}`,
+                scale: 1.02,
+                boxShadow: `0 0 15px ${colors.accentGlow}`,
               }}
               whileTap={{ scale: 0.97 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                className="absolute inset-0"
-                style={{ background: `linear-gradient(90deg, transparent, ${colors.bg}, transparent)` }}
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-              />
-              <ExternalLink size={12} className="relative z-10" />
+              <ExternalLink size={13} className="relative z-10" />
               <span className="relative z-10">{card.linkLabel}</span>
             </motion.a>
 
@@ -316,9 +311,9 @@ export default function BentoCard({ card, style }: BentoCardProps) {
             <div
               className="flex-1 min-h-0 overflow-hidden"
               style={{
-                border: `1px solid ${colors.border}`,
-                borderRadius: '2px',
-                background: 'rgba(0,0,0,0.3)',
+                border: `1px solid rgba(80, 75, 65, 0.3)`,
+                borderRadius: '8px',
+                background: 'rgba(0,0,0,0.25)',
               }}
             >
               <iframe
@@ -326,7 +321,8 @@ export default function BentoCard({ card, style }: BentoCardProps) {
                 className="w-full h-full"
                 style={{
                   border: 'none',
-                  filter: 'brightness(0.75) contrast(1.1)',
+                  borderRadius: '7px',
+                  filter: 'brightness(0.7) contrast(1.05) sepia(0.1)',
                 }}
                 title={`${card.title} preview`}
                 sandbox="allow-scripts allow-same-origin allow-popups"
@@ -337,14 +333,11 @@ export default function BentoCard({ card, style }: BentoCardProps) {
             {/* Flip back */}
             <button
               onClick={(e) => { e.stopPropagation(); handleFlip(); }}
-              className="mt-2 flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.2em] opacity-40 hover:opacity-100 transition-all duration-300 shrink-0"
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                color: '#e8e8e8',
-              }}
+              className="mt-2 flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-wider opacity-40 hover:opacity-100 transition-all duration-300 shrink-0"
+              style={{ fontFamily: "'Special Elite', cursive", color: '#a09888' }}
             >
-              <RotateCcw size={10} />
-              FLIP BACK
+              <RotateCcw size={11} />
+              flip back
             </button>
           </div>
         </div>
@@ -357,23 +350,25 @@ export default function BentoCard({ card, style }: BentoCardProps) {
           className="absolute z-50"
           style={{
             ...cornerPos[corner],
-            width: 18,
-            height: 18,
+            width: 20,
+            height: 20,
             opacity: isHovered ? 1 : 0,
             transition: 'opacity 0.3s',
           }}
           onMouseDown={(e) => handleResizeStart(e, corner)}
           onTouchStart={(e) => handleResizeStart(e, corner)}
         >
+          {/* L-shaped corner handle */}
           <div
             className="absolute"
             style={{
               width: '100%',
               height: '2px',
-              background: colors.text,
-              boxShadow: `0 0 4px ${colors.glow}`,
+              background: '#C83232',
+              borderRadius: '1px',
               top: corner.includes('top') ? 0 : 'auto',
               bottom: corner.includes('bottom') ? 0 : 'auto',
+              boxShadow: '0 0 4px rgba(200,50,50,0.4)',
             }}
           />
           <div
@@ -381,33 +376,33 @@ export default function BentoCard({ card, style }: BentoCardProps) {
             style={{
               width: '2px',
               height: '100%',
-              background: colors.text,
-              boxShadow: `0 0 4px ${colors.glow}`,
+              background: '#C83232',
+              borderRadius: '1px',
               left: corner.includes('left') ? 0 : 'auto',
               right: corner.includes('right') ? 0 : 'auto',
+              boxShadow: '0 0 4px rgba(200,50,50,0.4)',
             }}
           />
         </div>
       ))}
 
-      {/* Resize dimension indicator */}
+      {/* Resize span indicator */}
       <AnimatePresence>
         {isResizing && (
           <motion.div
-            className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 text-[10px] z-50 whitespace-nowrap"
+            className="absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 text-[11px] z-50 whitespace-nowrap"
             style={{
-              fontFamily: "'Orbitron', sans-serif",
-              color: colors.text,
-              background: 'rgba(8,8,12,0.95)',
-              border: `1px solid ${colors.border}`,
-              borderRadius: '2px',
-              textShadow: `0 0 4px ${colors.glow}`,
+              fontFamily: "'Special Elite', cursive",
+              color: '#C83232',
+              background: 'rgba(20, 18, 15, 0.95)',
+              border: '1px solid rgba(200, 50, 50, 0.3)',
+              borderRadius: '6px',
             }}
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
           >
-            {Math.round(size.w)} x {Math.round(size.h)}
+            {spanW}x{spanH}
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./theme-styles.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,54 +42,53 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Neon Vandal custom colors */
-  --color-neon-pink: oklch(0.65 0.29 350);
-  --color-neon-green: oklch(0.82 0.26 145);
-  --color-neon-blue: oklch(0.78 0.18 220);
-  --color-neon-amber: oklch(0.8 0.18 80);
-  --color-void: oklch(0.1 0.02 280);
-  --color-void-light: oklch(0.15 0.02 280);
-  --color-void-lighter: oklch(0.2 0.02 280);
+  /* Banksy Street Art palette */
+  --color-rebel-red: oklch(0.55 0.24 25);
+  --color-concrete: oklch(0.35 0.01 80);
+  --color-concrete-light: oklch(0.45 0.01 80);
+  --color-stencil-black: oklch(0.12 0.01 0);
+  --color-spray-white: oklch(0.92 0.01 90);
 
-  --font-display: 'Russo One', sans-serif;
+  --font-stencil: 'Permanent Marker', cursive;
+  --font-typewriter: 'Special Elite', cursive;
+  --font-headline: 'Bebas Neue', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-data: 'Orbitron', sans-serif;
 }
 
 :root {
-  --radius: 0.25rem;
-  --background: oklch(0.08 0.02 280);
-  --foreground: oklch(0.92 0.01 90);
-  --card: oklch(0.12 0.02 280);
-  --card-foreground: oklch(0.92 0.01 90);
-  --popover: oklch(0.12 0.02 280);
-  --popover-foreground: oklch(0.92 0.01 90);
-  --primary: oklch(0.65 0.29 350);
+  --radius: 0.75rem;
+  --background: oklch(0.15 0.005 60);
+  --foreground: oklch(0.88 0.01 80);
+  --card: oklch(0.18 0.008 60);
+  --card-foreground: oklch(0.88 0.01 80);
+  --popover: oklch(0.18 0.008 60);
+  --popover-foreground: oklch(0.88 0.01 80);
+  --primary: oklch(0.55 0.24 25);
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.15 0.02 280);
-  --secondary-foreground: oklch(0.82 0.26 145);
-  --muted: oklch(0.18 0.02 280);
-  --muted-foreground: oklch(0.6 0.02 280);
-  --accent: oklch(0.78 0.18 220);
+  --secondary: oklch(0.22 0.008 60);
+  --secondary-foreground: oklch(0.75 0.01 80);
+  --muted: oklch(0.25 0.008 60);
+  --muted-foreground: oklch(0.55 0.01 80);
+  --accent: oklch(0.55 0.24 25);
   --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.65 0.29 350);
+  --destructive: oklch(0.55 0.24 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0.04 280);
-  --input: oklch(0.2 0.03 280);
-  --ring: oklch(0.65 0.29 350);
-  --chart-1: oklch(0.65 0.29 350);
-  --chart-2: oklch(0.82 0.26 145);
-  --chart-3: oklch(0.78 0.18 220);
-  --chart-4: oklch(0.8 0.18 80);
-  --chart-5: oklch(0.5 0.15 280);
-  --sidebar: oklch(0.1 0.02 280);
-  --sidebar-foreground: oklch(0.92 0.01 90);
-  --sidebar-primary: oklch(0.65 0.29 350);
+  --border: oklch(0.3 0.01 60);
+  --input: oklch(0.22 0.01 60);
+  --ring: oklch(0.55 0.24 25);
+  --chart-1: oklch(0.55 0.24 25);
+  --chart-2: oklch(0.45 0.01 80);
+  --chart-3: oklch(0.35 0.01 80);
+  --chart-4: oklch(0.65 0.01 80);
+  --chart-5: oklch(0.25 0.01 80);
+  --sidebar: oklch(0.13 0.005 60);
+  --sidebar-foreground: oklch(0.88 0.01 80);
+  --sidebar-primary: oklch(0.55 0.24 25);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.18 0.02 280);
-  --sidebar-accent-foreground: oklch(0.92 0.01 90);
-  --sidebar-border: oklch(0.25 0.04 280);
-  --sidebar-ring: oklch(0.65 0.29 350);
+  --sidebar-accent: oklch(0.22 0.008 60);
+  --sidebar-accent-foreground: oklch(0.88 0.01 80);
+  --sidebar-border: oklch(0.3 0.01 60);
+  --sidebar-ring: oklch(0.55 0.24 25);
 }
 
 @layer base {
@@ -97,7 +97,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Special Elite', cursive;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -143,152 +143,119 @@
 }
 
 /* ============================
-   NEON VANDAL — Global Effects
+   BANKSY STREET ART — Globals
    ============================ */
 
-/* Scan lines overlay */
-.scanlines::after {
+/* Concrete grain overlay */
+.concrete-grain::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.08) 2px,
-    rgba(0, 0, 0, 0.08) 4px
-  );
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.06;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 9998;
+  mix-blend-mode: overlay;
 }
 
-/* Neon glow utilities */
-.neon-pink-glow {
-  box-shadow: 0 0 8px rgba(255, 45, 123, 0.4),
-              0 0 20px rgba(255, 45, 123, 0.2),
-              inset 0 0 8px rgba(255, 45, 123, 0.1);
+/* Bento card style */
+.bento-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(25, 23, 20, 0.92);
+  border: 2px solid rgba(80, 75, 65, 0.3);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
-.neon-green-glow {
-  box-shadow: 0 0 8px rgba(0, 255, 159, 0.4),
-              0 0 20px rgba(0, 255, 159, 0.2),
-              inset 0 0 8px rgba(0, 255, 159, 0.1);
+.bento-card:hover {
+  border-color: rgba(200, 50, 50, 0.4);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(200, 50, 50, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.neon-blue-glow {
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4),
-              0 0 20px rgba(0, 212, 255, 0.2),
-              inset 0 0 8px rgba(0, 212, 255, 0.1);
+/* Spray paint text drip effect */
+.spray-text {
+  font-family: 'Permanent Marker', cursive;
+  color: #e8e0d4;
+  text-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.5),
+    -1px -1px 0 rgba(0, 0, 0, 0.3);
 }
 
-.neon-amber-glow {
-  box-shadow: 0 0 8px rgba(255, 184, 0, 0.4),
-              0 0 20px rgba(255, 184, 0, 0.2),
-              inset 0 0 8px rgba(255, 184, 0, 0.1);
+.spray-red {
+  color: #C83232;
+  text-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(200, 50, 50, 0.3);
 }
 
-.neon-text-pink {
-  color: #FF2D7B;
-  text-shadow: 0 0 7px rgba(255, 45, 123, 0.7),
-               0 0 20px rgba(255, 45, 123, 0.4),
-               0 0 40px rgba(255, 45, 123, 0.2);
+/* Stencil text style */
+.stencil-text {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-.neon-text-green {
-  color: #00FF9F;
-  text-shadow: 0 0 7px rgba(0, 255, 159, 0.7),
-               0 0 20px rgba(0, 255, 159, 0.4),
-               0 0 40px rgba(0, 255, 159, 0.2);
+/* Typewriter text */
+.typewriter-text {
+  font-family: 'Special Elite', cursive;
 }
 
-.neon-text-blue {
-  color: #00D4FF;
-  text-shadow: 0 0 7px rgba(0, 212, 255, 0.7),
-               0 0 20px rgba(0, 212, 255, 0.4),
-               0 0 40px rgba(0, 212, 255, 0.2);
-}
-
-.neon-text-amber {
-  color: #FFB800;
-  text-shadow: 0 0 7px rgba(255, 184, 0, 0.7),
-               0 0 20px rgba(255, 184, 0, 0.4),
-               0 0 40px rgba(255, 184, 0, 0.2);
-}
-
-/* Glitch animation */
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-}
-
-@keyframes glitch-skew {
-  0% { transform: skew(0deg); }
-  20% { transform: skew(-1deg); }
-  40% { transform: skew(0.5deg); }
-  60% { transform: skew(-0.5deg); }
-  80% { transform: skew(1deg); }
-  100% { transform: skew(0deg); }
-}
-
-@keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    opacity: 1;
-  }
-  20%, 24%, 55% {
-    opacity: 0.6;
-  }
-}
-
-@keyframes neon-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-@keyframes rain-drop {
-  0% { transform: translateY(-100vh); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes border-glow-rotate {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Custom scrollbar */
+/* Custom scrollbar — raw style */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(10, 10, 15, 0.8);
+  background: rgba(20, 18, 15, 0.9);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 45, 123, 0.4);
+  background: rgba(200, 50, 50, 0.4);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 45, 123, 0.7);
+  background: rgba(200, 50, 50, 0.7);
 }
 
-/* Selection color */
+/* Selection */
 ::selection {
-  background: rgba(255, 45, 123, 0.3);
-  color: #00FF9F;
+  background: rgba(200, 50, 50, 0.3);
+  color: #e8e0d4;
+}
+
+/* Glitch animation */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(-2px, -3px); }
+  60% { transform: translate(3px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes drip {
+  0% { transform: scaleY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0.6; }
+}
+
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.4; }
+}
+
+@keyframes spray-in {
+  0% { opacity: 0; filter: blur(8px); transform: scale(1.1); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1); }
 }

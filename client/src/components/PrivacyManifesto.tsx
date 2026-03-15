@@ -1,7 +1,7 @@
 /*
- * DESIGN: Neon Vandal — Cyberpunk Graffiti Noir
- * PrivacyManifesto: The rebellious anti-corporate message banner.
- * Typewriter effect, glitch text, neon accents.
+ * DESIGN: Banksy Street Art — Raw Stencil Rebellion
+ * PrivacyManifesto: Anti-corporate message with typewriter effect.
+ * Stencil icons, raw messaging, Banksy attitude.
  */
 
 import { motion } from 'framer-motion';
@@ -13,7 +13,8 @@ const messages = [
   'YOUR DATA STAYS YOURS. PERIOD.',
   'THEY WATCH. WE DON\'T.',
   'ZERO ANALYTICS. ZERO SURVEILLANCE.',
-  'BUILT FOR THE PEOPLE, NOT THE ALGORITHM.',
+  'THIS IS NOT A PRODUCT. THIS IS A PROTEST.',
+  'THE REVOLUTION WILL NOT BE MONETIZED.',
 ];
 
 export default function PrivacyManifesto() {
@@ -27,17 +28,17 @@ export default function PrivacyManifesto() {
       if (displayText.length < msg.length) {
         const timeout = setTimeout(() => {
           setDisplayText(msg.slice(0, displayText.length + 1));
-        }, 30 + Math.random() * 40);
+        }, 25 + Math.random() * 50);
         return () => clearTimeout(timeout);
       } else {
-        const timeout = setTimeout(() => setIsTyping(false), 2000);
+        const timeout = setTimeout(() => setIsTyping(false), 2500);
         return () => clearTimeout(timeout);
       }
     } else {
       if (displayText.length > 0) {
         const timeout = setTimeout(() => {
           setDisplayText(displayText.slice(0, -1));
-        }, 15);
+        }, 12);
         return () => clearTimeout(timeout);
       } else {
         setCurrentMessage((prev) => (prev + 1) % messages.length);
@@ -47,22 +48,22 @@ export default function PrivacyManifesto() {
   }, [displayText, isTyping, currentMessage]);
 
   const icons = [
-    { Icon: Shield, color: '#FF2D7B', label: 'SHIELDED' },
-    { Icon: EyeOff, color: '#00FF9F', label: 'INVISIBLE' },
-    { Icon: Lock, color: '#00D4FF', label: 'ENCRYPTED' },
-    { Icon: Wifi, color: '#FFB800', label: 'DECENTRALIZED' },
+    { Icon: Shield, label: 'SHIELDED' },
+    { Icon: EyeOff, label: 'INVISIBLE' },
+    { Icon: Lock, label: 'ENCRYPTED' },
+    { Icon: Wifi, label: 'DECENTRALIZED' },
   ];
 
   return (
-    <div className="w-full py-6 px-4">
+    <div className="w-full py-5 px-4">
       {/* Typewriter message */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-5">
         <div
-          className="inline-block text-sm md:text-base tracking-widest uppercase"
+          className="inline-block text-sm md:text-base tracking-wider uppercase"
           style={{
-            fontFamily: "'Orbitron', sans-serif",
-            color: '#00FF9F',
-            textShadow: '0 0 10px rgba(0, 255, 159, 0.5), 0 0 30px rgba(0, 255, 159, 0.2)',
+            fontFamily: "'Permanent Marker', cursive",
+            color: '#C83232',
+            textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
             minHeight: '1.5em',
           }}
         >
@@ -70,51 +71,40 @@ export default function PrivacyManifesto() {
           <motion.span
             animate={{ opacity: [1, 0] }}
             transition={{ duration: 0.5, repeat: Infinity }}
-            style={{ color: '#FF2D7B' }}
+            style={{ color: '#e8e0d4' }}
           >
-            _
+            |
           </motion.span>
         </div>
       </div>
 
       {/* Privacy icons */}
       <div className="flex justify-center gap-6 md:gap-10 flex-wrap">
-        {icons.map(({ Icon, color, label }, i) => (
+        {icons.map(({ Icon, label }, i) => (
           <motion.div
             key={label}
             className="flex flex-col items-center gap-2"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 + i * 0.15 }}
+            transition={{ delay: 0.5 + i * 0.12 }}
           >
             <motion.div
-              className="p-3 rounded-sm"
+              className="p-3"
               style={{
-                border: `1px solid ${color}40`,
-                background: `${color}08`,
+                border: '2px solid rgba(200, 50, 50, 0.2)',
+                borderRadius: '10px',
+                background: 'rgba(200, 50, 50, 0.04)',
               }}
               whileHover={{
-                boxShadow: `0 0 15px ${color}40, 0 0 30px ${color}20`,
-                borderColor: `${color}80`,
+                borderColor: 'rgba(200, 50, 50, 0.5)',
+                boxShadow: '0 0 12px rgba(200, 50, 50, 0.15)',
               }}
-              animate={{
-                boxShadow: [
-                  `0 0 5px ${color}20`,
-                  `0 0 10px ${color}30`,
-                  `0 0 5px ${color}20`,
-                ],
-              }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
             >
-              <Icon size={20} style={{ color }} />
+              <Icon size={20} style={{ color: '#C83232' }} />
             </motion.div>
             <span
-              className="text-[10px] tracking-widest uppercase"
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                color,
-                opacity: 0.7,
-              }}
+              className="text-[10px] tracking-widest uppercase stencil-text"
+              style={{ color: '#8a8278' }}
             >
               {label}
             </span>

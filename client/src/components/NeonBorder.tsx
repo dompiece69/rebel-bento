@@ -1,73 +1,48 @@
 /*
- * DESIGN: Neon Vandal — Cyberpunk Graffiti Noir
- * NeonBorder: Animated rotating gradient border effect.
- * Wraps content with a pulsing neon border.
+ * DESIGN: Banksy Street Art — Raw Stencil Rebellion
+ * PaintBorder: Raw painted border with drip effect.
+ * Replaces neon glow with gritty street art edge.
  */
 
 import { motion } from 'framer-motion';
 import { type ReactNode } from 'react';
 
-interface NeonBorderProps {
+interface PaintBorderProps {
   children: ReactNode;
-  color?: 'pink' | 'green' | 'blue' | 'amber' | 'multi';
+  color?: 'red' | 'white' | 'multi';
   className?: string;
-  animate?: boolean;
 }
 
-const gradients = {
-  pink: 'linear-gradient(90deg, #FF2D7B, #FF2D7B, transparent, #FF2D7B)',
-  green: 'linear-gradient(90deg, #00FF9F, #00FF9F, transparent, #00FF9F)',
-  blue: 'linear-gradient(90deg, #00D4FF, #00D4FF, transparent, #00D4FF)',
-  amber: 'linear-gradient(90deg, #FFB800, #FFB800, transparent, #FFB800)',
-  multi: 'linear-gradient(90deg, #FF2D7B, #00FF9F, #00D4FF, #FFB800, #FF2D7B)',
+const borderColors = {
+  red: 'rgba(200, 50, 50, 0.25)',
+  white: 'rgba(232, 224, 212, 0.15)',
+  multi: 'rgba(200, 50, 50, 0.2)',
 };
 
-export default function NeonBorder({
-  children,
-  color = 'multi',
-  className = '',
-  animate = true,
-}: NeonBorderProps) {
+export default function NeonBorder({ children, color = 'multi', className = '' }: PaintBorderProps) {
   return (
-    <div className={`relative p-[1px] ${className}`}>
-      {/* Animated border */}
-      <motion.div
-        className="absolute inset-0 rounded-sm"
+    <motion.div
+      className={`relative ${className}`}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div
+        className="relative"
         style={{
-          background: gradients[color],
-          backgroundSize: '300% 100%',
-          opacity: 0.6,
+          border: `2px solid ${borderColors[color]}`,
+          borderRadius: '14px',
+          background: 'rgba(25, 23, 20, 0.6)',
+          backdropFilter: 'blur(8px)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+          overflow: 'hidden',
         }}
-        animate={animate ? {
-          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-        } : {}}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-      />
-      {/* Glow layer */}
-      <motion.div
-        className="absolute inset-0 rounded-sm blur-sm"
-        style={{
-          background: gradients[color],
-          backgroundSize: '300% 100%',
-          opacity: 0.3,
-        }}
-        animate={animate ? {
-          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-        } : {}}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-      />
-      {/* Content */}
-      <div className="relative z-10 rounded-sm bg-background">
-        {children}
+      >
+        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: borderColors[color] }} />
+        <div className="relative z-10">
+          {children}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

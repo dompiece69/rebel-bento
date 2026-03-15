@@ -19,18 +19,9 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="banksy">
         <TooltipProvider>
-          <Toaster
-            toastOptions={{
-              style: {
-                background: 'rgba(10, 10, 15, 0.95)',
-                border: '1px solid rgba(255, 45, 123, 0.3)',
-                color: '#e8e8e8',
-                fontFamily: "'JetBrains Mono', monospace",
-              },
-            }}
-          />
+          <Toaster />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

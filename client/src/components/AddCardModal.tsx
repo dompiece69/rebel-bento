@@ -1,7 +1,7 @@
 /*
- * DESIGN: Neon Vandal — Cyberpunk Graffiti Noir
- * AddCardModal: Modal for adding new link cards to the grid.
- * Styled with neon borders and cyberpunk inputs.
+ * DESIGN: Banksy Street Art — Raw Stencil Rebellion
+ * AddCardModal: Modal for adding new link cards.
+ * Raw concrete styling, stencil fonts, red accents.
  */
 
 import { useState } from 'react';
@@ -13,11 +13,11 @@ interface AddCardModalProps {
   onAdd: (card: BentoCardData) => void;
 }
 
-const neonColorOptions: Array<{ value: BentoCardData['neonColor']; label: string; color: string }> = [
-  { value: 'pink', label: 'NEON PINK', color: '#FF2D7B' },
-  { value: 'green', label: 'ACID GREEN', color: '#00FF9F' },
-  { value: 'blue', label: 'LASER BLUE', color: '#00D4FF' },
-  { value: 'amber', label: 'WARNING AMBER', color: '#FFB800' },
+const colorOptions: Array<{ value: BentoCardData['neonColor']; label: string; color: string }> = [
+  { value: 'red', label: 'REBEL RED', color: '#C83232' },
+  { value: 'white', label: 'STENCIL WHITE', color: '#e8e0d4' },
+  { value: 'grey', label: 'CONCRETE', color: '#8a8278' },
+  { value: 'dark', label: 'SHADOW', color: '#5a5550' },
 ];
 
 export default function AddCardModal({ onAdd }: AddCardModalProps) {
@@ -26,7 +26,7 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
   const [videoUrl, setVideoUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [linkLabel, setLinkLabel] = useState('');
-  const [neonColor, setNeonColor] = useState<BentoCardData['neonColor']>('pink');
+  const [neonColor, setNeonColor] = useState<BentoCardData['neonColor']>('red');
   const [cardSize, setCardSize] = useState<'small' | 'wide' | 'tall' | 'large'>('small');
 
   const handleSubmit = () => {
@@ -48,7 +48,6 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
       neonColor,
       defaultWidth: sizeMap[cardSize].w,
       defaultHeight: sizeMap[cardSize].h,
-      rotation: (Math.random() - 0.5) * 2,
     };
 
     onAdd(newCard);
@@ -60,13 +59,13 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
   };
 
   const inputStyle: React.CSSProperties = {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '12px',
-    background: 'rgba(10, 10, 15, 0.8)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: '2px',
-    color: '#e8e8e8',
-    padding: '8px 12px',
+    fontFamily: "'Special Elite', cursive",
+    fontSize: '13px',
+    background: 'rgba(20, 18, 15, 0.8)',
+    border: '1px solid rgba(80, 75, 65, 0.3)',
+    borderRadius: '8px',
+    color: '#e8e0d4',
+    padding: '10px 14px',
     width: '100%',
     outline: 'none',
   };
@@ -78,22 +77,22 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-2 px-4 py-2.5"
         style={{
-          fontFamily: "'Orbitron', sans-serif",
-          fontSize: '11px',
-          letterSpacing: '0.15em',
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: '14px',
+          letterSpacing: '0.1em',
           textTransform: 'uppercase',
-          color: '#00FF9F',
-          border: '1px solid rgba(0, 255, 159, 0.3)',
-          borderRadius: '2px',
-          background: 'rgba(0, 255, 159, 0.05)',
+          color: '#C83232',
+          border: '2px solid rgba(200, 50, 50, 0.3)',
+          borderRadius: '8px',
+          background: 'rgba(200, 50, 50, 0.05)',
         }}
         whileHover={{
-          borderColor: 'rgba(0, 255, 159, 0.6)',
-          boxShadow: '0 0 15px rgba(0, 255, 159, 0.2), 0 0 30px rgba(0, 255, 159, 0.1)',
+          borderColor: 'rgba(200, 50, 50, 0.6)',
+          boxShadow: '0 0 15px rgba(200, 50, 50, 0.15)',
         }}
         whileTap={{ scale: 0.97 }}
       >
-        <Plus size={14} />
+        <Plus size={16} />
         ADD CARD
       </motion.button>
 
@@ -116,10 +115,10 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
             <motion.div
               className="relative z-10 w-full max-w-md p-6"
               style={{
-                background: 'rgba(12, 12, 18, 0.98)',
-                border: '1px solid rgba(255, 45, 123, 0.3)',
-                borderRadius: '3px',
-                boxShadow: '0 0 30px rgba(255, 45, 123, 0.15), 0 20px 60px rgba(0,0,0,0.5)',
+                background: 'rgba(25, 23, 20, 0.98)',
+                border: '2px solid rgba(200, 50, 50, 0.25)',
+                borderRadius: '14px',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 20px rgba(200,50,50,0.1)',
               }}
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
@@ -128,88 +127,68 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-5">
                 <h2
-                  className="text-sm uppercase tracking-[0.2em]"
+                  className="text-xl uppercase"
                   style={{
-                    fontFamily: "'Russo One', sans-serif",
-                    color: '#FF2D7B',
-                    textShadow: '0 0 8px rgba(255, 45, 123, 0.4)',
+                    fontFamily: "'Permanent Marker', cursive",
+                    color: '#C83232',
+                    textShadow: '1px 1px 0 rgba(0,0,0,0.5)',
                   }}
                 >
-                  NEW CARD
+                  New Card
                 </h2>
                 <button onClick={() => setIsOpen(false)} className="opacity-40 hover:opacity-100 transition-opacity">
-                  <X size={16} style={{ color: '#e8e8e8' }} />
+                  <X size={18} style={{ color: '#a09888' }} />
                 </button>
               </div>
 
               {/* Form */}
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: "'Orbitron', sans-serif", color: '#00D4FF', opacity: 0.7 }}>
+                  <label className="block text-xs uppercase tracking-wider mb-1.5 stencil-text" style={{ color: '#8a8278' }}>
                     TITLE
                   </label>
-                  <input
-                    style={inputStyle}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="SIGNAL PROTOCOL"
-                  />
+                  <input style={inputStyle} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="SIGNAL PROTOCOL" />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: "'Orbitron', sans-serif", color: '#00D4FF', opacity: 0.7 }}>
+                  <label className="block text-xs uppercase tracking-wider mb-1.5 stencil-text" style={{ color: '#8a8278' }}>
                     VIDEO EMBED URL
                   </label>
-                  <input
-                    style={inputStyle}
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    placeholder="https://youtube.com/embed/..."
-                  />
+                  <input style={inputStyle} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtube.com/embed/..." />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: "'Orbitron', sans-serif", color: '#00D4FF', opacity: 0.7 }}>
+                  <label className="block text-xs uppercase tracking-wider mb-1.5 stencil-text" style={{ color: '#8a8278' }}>
                     LINK URL
                   </label>
-                  <input
-                    style={inputStyle}
-                    value={linkUrl}
-                    onChange={(e) => setLinkUrl(e.target.value)}
-                    placeholder="https://signal.org"
-                  />
+                  <input style={inputStyle} value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="https://signal.org" />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: "'Orbitron', sans-serif", color: '#00D4FF', opacity: 0.7 }}>
+                  <label className="block text-xs uppercase tracking-wider mb-1.5 stencil-text" style={{ color: '#8a8278' }}>
                     LINK LABEL
                   </label>
-                  <input
-                    style={inputStyle}
-                    value={linkLabel}
-                    onChange={(e) => setLinkLabel(e.target.value)}
-                    placeholder="GET SIGNAL"
-                  />
+                  <input style={inputStyle} value={linkLabel} onChange={(e) => setLinkLabel(e.target.value)} placeholder="GET SIGNAL" />
                 </div>
 
-                {/* Neon color picker */}
+                {/* Color picker */}
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest mb-2" style={{ fontFamily: "'Orbitron', sans-serif", color: '#00D4FF', opacity: 0.7 }}>
-                    NEON COLOR
+                  <label className="block text-xs uppercase tracking-wider mb-2 stencil-text" style={{ color: '#8a8278' }}>
+                    ACCENT COLOR
                   </label>
                   <div className="flex gap-2">
-                    {neonColorOptions.map((opt) => (
+                    {colorOptions.map((opt) => (
                       <button
                         key={opt.value}
                         onClick={() => setNeonColor(opt.value)}
-                        className="flex-1 py-2 text-[9px] uppercase tracking-wider transition-all"
+                        className="flex-1 py-2 text-[10px] uppercase tracking-wider transition-all"
                         style={{
-                          fontFamily: "'Orbitron', sans-serif",
+                          fontFamily: "'Bebas Neue', sans-serif",
+                          letterSpacing: '0.1em',
                           color: opt.color,
-                          border: `1px solid ${neonColor === opt.value ? opt.color : 'rgba(255,255,255,0.08)'}`,
-                          borderRadius: '2px',
+                          border: `2px solid ${neonColor === opt.value ? opt.color : 'rgba(80,75,65,0.2)'}`,
+                          borderRadius: '8px',
                           background: neonColor === opt.value ? `${opt.color}15` : 'transparent',
-                          boxShadow: neonColor === opt.value ? `0 0 10px ${opt.color}30` : 'none',
                         }}
                       >
                         {opt.label}
@@ -220,7 +199,7 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
 
                 {/* Size picker */}
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest mb-2" style={{ fontFamily: "'Orbitron', sans-serif", color: '#00D4FF', opacity: 0.7 }}>
+                  <label className="block text-xs uppercase tracking-wider mb-2 stencil-text" style={{ color: '#8a8278' }}>
                     CARD SIZE
                   </label>
                   <div className="flex gap-2">
@@ -228,13 +207,14 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
                       <button
                         key={s}
                         onClick={() => setCardSize(s)}
-                        className="flex-1 py-2 text-[9px] uppercase tracking-wider transition-all"
+                        className="flex-1 py-2 text-[10px] uppercase tracking-wider transition-all"
                         style={{
-                          fontFamily: "'Orbitron', sans-serif",
-                          color: cardSize === s ? '#FFB800' : 'rgba(232,232,232,0.4)',
-                          border: `1px solid ${cardSize === s ? 'rgba(255,184,0,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                          borderRadius: '2px',
-                          background: cardSize === s ? 'rgba(255,184,0,0.08)' : 'transparent',
+                          fontFamily: "'Bebas Neue', sans-serif",
+                          letterSpacing: '0.1em',
+                          color: cardSize === s ? '#e8e0d4' : '#5a5550',
+                          border: `2px solid ${cardSize === s ? 'rgba(232,224,212,0.3)' : 'rgba(80,75,65,0.2)'}`,
+                          borderRadius: '8px',
+                          background: cardSize === s ? 'rgba(232,224,212,0.05)' : 'transparent',
                         }}
                       >
                         {s}
@@ -246,17 +226,18 @@ export default function AddCardModal({ onAdd }: AddCardModalProps) {
                 {/* Submit */}
                 <motion.button
                   onClick={handleSubmit}
-                  className="w-full py-3 mt-2 text-xs uppercase tracking-[0.2em] font-bold"
+                  className="w-full py-3 mt-2 text-sm uppercase font-bold"
                   style={{
-                    fontFamily: "'Orbitron', sans-serif",
-                    color: '#00FF9F',
-                    border: '1px solid rgba(0, 255, 159, 0.4)',
-                    borderRadius: '2px',
-                    background: 'rgba(0, 255, 159, 0.08)',
+                    fontFamily: "'Permanent Marker', cursive",
+                    color: '#e8e0d4',
+                    border: '2px solid rgba(200, 50, 50, 0.4)',
+                    borderRadius: '10px',
+                    background: 'rgba(200, 50, 50, 0.12)',
+                    letterSpacing: '0.1em',
                   }}
                   whileHover={{
-                    boxShadow: '0 0 20px rgba(0, 255, 159, 0.3)',
-                    borderColor: 'rgba(0, 255, 159, 0.7)',
+                    boxShadow: '0 0 20px rgba(200, 50, 50, 0.2)',
+                    borderColor: 'rgba(200, 50, 50, 0.6)',
                   }}
                   whileTap={{ scale: 0.97 }}
                 >

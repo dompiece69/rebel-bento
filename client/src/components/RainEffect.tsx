@@ -1,7 +1,7 @@
 /*
- * DESIGN: Neon Vandal — Cyberpunk Graffiti Noir
- * RainEffect: Animated rain/particle effect for the background.
- * Subtle neon-colored streaks falling down the screen.
+ * DESIGN: Banksy Street Art — Raw Stencil Rebellion
+ * DripsEffect: Subtle paint drips falling down the screen.
+ * Muted, slow, organic — like paint running down a wall.
  */
 
 import { useEffect, useRef } from 'react';
@@ -17,20 +17,21 @@ export default function RainEffect() {
     if (!ctx) return;
 
     let animationId: number;
-    let drops: Array<{
+    let drips: Array<{
       x: number;
       y: number;
       speed: number;
       length: number;
       opacity: number;
+      width: number;
       color: string;
     }> = [];
 
     const colors = [
-      'rgba(255, 45, 123, ',   // pink
-      'rgba(0, 255, 159, ',    // green
-      'rgba(0, 212, 255, ',    // blue
-      'rgba(255, 184, 0, ',    // amber
+      'rgba(200, 50, 50, ',   // rebel red
+      'rgba(60, 55, 48, ',    // dark concrete
+      'rgba(100, 95, 85, ',   // grey
+      'rgba(200, 50, 50, ',   // red again (weighted)
     ];
 
     const resize = () => {
@@ -38,16 +39,17 @@ export default function RainEffect() {
       canvas.height = window.innerHeight;
     };
 
-    const initDrops = () => {
-      drops = [];
-      const count = Math.floor(window.innerWidth / 15);
+    const initDrips = () => {
+      drips = [];
+      const count = Math.floor(window.innerWidth / 40); // fewer, thicker drips
       for (let i = 0; i < count; i++) {
-        drops.push({
+        drips.push({
           x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          speed: 1 + Math.random() * 3,
-          length: 15 + Math.random() * 30,
-          opacity: 0.05 + Math.random() * 0.15,
+          y: Math.random() * canvas.height * -1,
+          speed: 0.3 + Math.random() * 0.8, // slower
+          length: 30 + Math.random() * 80, // longer drips
+          opacity: 0.02 + Math.random() * 0.06, // very subtle
+          width: 1 + Math.random() * 2.5, // variable width
           color: colors[Math.floor(Math.random() * colors.length)],
         });
       }
@@ -56,18 +58,32 @@ export default function RainEffect() {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      drops.forEach((drop) => {
+      drips.forEach((drip) => {
+        // Draw drip with rounded end
+        const gradient = ctx.createLinearGradient(drip.x, drip.y, drip.x, drip.y + drip.length);
+        gradient.addColorStop(0, `${drip.color}0)`);
+        gradient.addColorStop(0.3, `${drip.color}${drip.opacity})`);
+        gradient.addColorStop(0.8, `${drip.color}${drip.opacity * 0.8})`);
+        gradient.addColorStop(1, `${drip.color}0)`);
+
         ctx.beginPath();
-        ctx.moveTo(drop.x, drop.y);
-        ctx.lineTo(drop.x, drop.y + drop.length);
-        ctx.strokeStyle = `${drop.color}${drop.opacity})`;
-        ctx.lineWidth = 1;
+        ctx.moveTo(drip.x, drip.y);
+        ctx.lineTo(drip.x, drip.y + drip.length);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = drip.width;
+        ctx.lineCap = 'round';
         ctx.stroke();
 
-        drop.y += drop.speed;
-        if (drop.y > canvas.height) {
-          drop.y = -drop.length;
-          drop.x = Math.random() * canvas.width;
+        // Bulge at bottom of drip
+        ctx.beginPath();
+        ctx.arc(drip.x, drip.y + drip.length, drip.width * 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = `${drip.color}${drip.opacity * 0.5})`;
+        ctx.fill();
+
+        drip.y += drip.speed;
+        if (drip.y > canvas.height + drip.length) {
+          drip.y = -drip.length - Math.random() * 200;
+          drip.x = Math.random() * canvas.width;
         }
       });
 
@@ -75,12 +91,12 @@ export default function RainEffect() {
     };
 
     resize();
-    initDrops();
+    initDrips();
     animate();
 
     window.addEventListener('resize', () => {
       resize();
-      initDrops();
+      initDrips();
     });
 
     return () => {
@@ -93,7 +109,7 @@ export default function RainEffect() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.5 }}
     />
   );
 }

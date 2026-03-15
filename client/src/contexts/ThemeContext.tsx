@@ -1,55 +1,53 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Theme = "light" | "dark";
+export type AppTheme = 'banksy' | 'pixel' | 'futuristic';
 
 interface ThemeContextType {
-  theme: Theme;
-  toggleTheme?: () => void;
-  switchable: boolean;
+  theme: AppTheme;
+  setTheme: (theme: AppTheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: React.ReactNode;
-  defaultTheme?: Theme;
-  switchable?: boolean;
+  defaultTheme?: AppTheme;
 }
 
 export function ThemeProvider({
   children,
-  defaultTheme = "light",
-  switchable = false,
+  defaultTheme = 'banksy',
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (switchable) {
-      const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
-    }
-    return defaultTheme;
-  });
+  const [theme, setThemeState] = useState<AppTheme>(defaultTheme);
+  const [mounted, setMounted] = useState(false);
 
+  // Load from localStorage on mount
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
+    const saved = localStorage.getItem('rebel-bento-theme') as AppTheme | null;
+    if (saved && ['banksy', 'pixel', 'futuristic'].includes(saved)) {
+      setThemeState(saved);
     }
+    setMounted(true);
+  }, []);
 
-    if (switchable) {
-      localStorage.setItem("theme", theme);
+  // Save to localStorage and apply to DOM
+  const setTheme = (newTheme: AppTheme) => {
+    setThemeState(newTheme);
+    localStorage.setItem('rebel-bento-theme', newTheme);
+    document.documentElement.setAttribute('data-rebel-theme', newTheme);
+  };
+
+  // Apply theme on mount and change
+  useEffect(() => {
+    if (mounted) {
+      document.documentElement.setAttribute('data-rebel-theme', theme);
     }
-  }, [theme, switchable]);
+  }, [theme, mounted]);
 
-  const toggleTheme = switchable
-    ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
-      }
-    : undefined;
+  if (!mounted) return <>{children}</>;
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -58,7 +56,7 @@ export function ThemeProvider({
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider");
+    throw new Error('useTheme must be used within ThemeProvider');
   }
   return context;
 }

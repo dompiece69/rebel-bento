@@ -6,45 +6,40 @@ export default function NotFound() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-4"
-      style={{ background: 'rgba(8, 8, 12, 1)' }}
+      style={{ background: 'rgba(20, 18, 15, 1)' }}
     >
       <GlitchText
         text="404"
         className="text-6xl md:text-8xl mb-4"
-        color="#FF2D7B"
-        glowColor="rgba(255, 45, 123, 0.5)"
+        color="#C83232"
+        glowColor="rgba(200, 50, 50, 0.3)"
       />
 
       <motion.p
-        className="text-sm tracking-[0.3em] uppercase mb-8"
-        style={{
-          fontFamily: "'Orbitron', sans-serif",
-          color: '#00D4FF',
-          textShadow: '0 0 10px rgba(0, 212, 255, 0.4)',
-        }}
+        className="text-sm tracking-widest uppercase mb-8 stencil-text"
+        style={{ color: '#8a8278' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        SIGNAL LOST
+        THIS WALL IS BLANK
       </motion.p>
 
       <Link href="/">
         <motion.span
-          className="px-6 py-3 text-xs uppercase tracking-[0.2em] inline-block"
+          className="px-6 py-3 text-xs uppercase tracking-wider inline-block stencil-text"
           style={{
-            fontFamily: "'Orbitron', sans-serif",
-            color: '#00FF9F',
-            border: '1px solid rgba(0, 255, 159, 0.4)',
-            borderRadius: '2px',
-            background: 'rgba(0, 255, 159, 0.05)',
+            color: '#e8e0d4',
+            border: '2px solid rgba(200, 50, 50, 0.3)',
+            borderRadius: '8px',
+            background: 'rgba(200, 50, 50, 0.08)',
           }}
           whileHover={{
-            boxShadow: '0 0 20px rgba(0, 255, 159, 0.3)',
-            borderColor: 'rgba(0, 255, 159, 0.7)',
+            boxShadow: '0 0 15px rgba(200, 50, 50, 0.2)',
+            borderColor: 'rgba(200, 50, 50, 0.6)',
           }}
         >
-          RETURN TO BASE
+          BACK TO THE WALL
         </motion.span>
       </Link>
     </div>
