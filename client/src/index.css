@@ -163,23 +163,25 @@
 
 /* Bento card style */
 .bento-card {
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  background: rgba(25, 23, 20, 0.92);
-  border: 2px solid rgba(80, 75, 65, 0.3);
+  background: rgba(22, 20, 17, 0.96);
+  border: 2px solid rgba(80, 75, 65, 0.35);
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.4),
-    0 1px 3px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .bento-card:hover {
-  border-color: rgba(200, 50, 50, 0.4);
+  border-color: rgba(200, 50, 50, 0.5);
   box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.5),
-    0 2px 8px rgba(200, 50, 50, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 14px 48px rgba(0, 0, 0, 0.65),
+    0 4px 16px rgba(200, 50, 50, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* Spray paint text drip effect */
